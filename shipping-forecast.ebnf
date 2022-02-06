@@ -1,0 +1,65 @@
+/* https://en.wikipedia.org/wiki/Shipping_Forecast#Broadcast_format */
+
+<digit> ::= [0-9]
+
+<hour>        ::= [0-1] <digit>
+<minute>      ::= [0-5] <digit>
+<time>        ::= <hour> ":" <minute>
+<future_time> ::= <time> " tomorrow"?
+
+<compass_direction>      ::= "north" ("west" | "east") | "east" | "south" ("west" | "east") | "west"
+<compass_direction_caps> ::= "North" ("west" | "east") | "East" | "South" ("west" | "east") | "West" 
+
+<area> ::= "Viking" | "North Utsire" | "South Utsire" | "Forties"      | "Cromarty"  | "Forth"   |
+           "Tyne"   | "Dogger"       | "Fisher"       | "German Bight" | "Humber"    | "Thames"  | "Dover"    |
+           "Wight"  | "Portland"     | "Plymouth"     | "Biscay"       | "Trafalgar" | "FitzRoy" | "Sole"     |
+           "Lundy"  | "Fastnet"      | "Irish Sea"    | "Shannon"      | "Rockall"   | "Malin"   | "Hebrides" |
+           "Bailey" | "Fair Isle"    | "Faeroes"      | "Southeast Iceland" 
+
+<introduction> ::= "And now the Shipping Forecast, issued by the Met Office on behalf "
+                   "of the Maritime and Coastguard Agency at " <time> " today."
+
+<at_least_two_comma_separated_areas> ::= <area> ", " <area> | <area> ", " <at_least_two_comma_separated_areas>
+<area_list> ::= <area> | <area> " and " <area> | <at_least_two_comma_separated_areas> ", and " <area>
+
+<gale_warnings> ::= "There are warnings of gales in " <area_list> "." |
+                    "There are warnings of gales in all areas except " <area_list> "."
+
+<rate_of_change>       ::= "more slowly" | "slowly" | "quickly" | "very rapidly"
+<pressure>             ::= "9" <digit> <digit>
+<pressure_description> ::= "High" | "Medium" | "Low"
+<pressure_change>      ::= "deepening" | "clearing"
+
+<general_synopsis_pressure_area> ::= <compass_direction> " of " <area> " " <pressure>
+<general_synopsis_line>          ::= <pressure_description> " " <general_synopsis_pressure_area>
+                                     (", " <pressure_change> " " <rate_of_change> ",")?
+                                     " expected " <general_synopsis_pressure_area> " by " <future_time> "."
+<general_synopsis_body>          ::= <general_synopsis_line> | <general_synopsis_line> " " <general_synopsis_body>
+<general_synopsis>               ::= "The general synopsis:\n\n" <general_synopsis_body>
+
+<precipitation_modifier> ::= "Thundery" | "Wintry" | "Squally" | "Occasionally" | "Heavy" | "Light"
+<precipitation_type>     ::= "showers" | "rain" | "snow"
+<precipitation>          ::= <precipitation_modifier> " " <precipitation_type>
+
+/* https://en.wikipedia.org/wiki/Beaufort_scale */
+<wind_strength>   ::= [0-7] | "gale 8" | "severe gale 9" | "storm 10" | "violent storm 11" | "hurricane force 12"
+<wind_change>     ::= "becoming cyclonic" | "veering" | "backing"
+<initial_wind>    ::= <compass_direction_caps> " " <wind_strength> (" to " <wind_strength>)
+<subsequent_wind> ::= <compass_direction> " " <wind_strength> " later"?
+<wind>            ::= <initial_wind> |
+                      <initial_wind> ", " <wind_change> " " <subsequent_wind> (", occasionally " <subsequent_wind>)?
+
+<initial_visibility>    ::= "Good" | "Moderate" | "Poor" | "Very poor" 
+<subsequent_visibility> ::= "good" | "moderate" | "poor" | "very poor"
+<visibility>            ::= <initial_visibility> |
+                            <initial_visibility> " or " <subsequent_visibility> |
+                            <initial_visibility> ", occasionally " <subsequent_visibility> " later"? |
+                            <initial_visibility> ", becoming " <subsequent_visibility> " later"?
+
+<icing> ::= ("Moderate" | "Severe") " icing"
+
+<area_forecast>  ::= <area_list> ". " <wind> ". " <precipitation> ". "
+                    <visibility> "." (" " <icing> ".")?
+<area_forecasts> ::= "The area forecasts for the next 24 hours:\n\n" (<area_forecast> "\n")+
+
+<forecast> ::= <introduction> "\n\n" <gale_warnings> "\n\n" <general_synopsis> "\n\n" <area_forecasts>
