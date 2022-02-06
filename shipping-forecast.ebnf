@@ -2,7 +2,7 @@
 
 <digit> ::= [0-9]
 
-<hour>        ::= [0-1] <digit>
+<hour>        ::= [0-1] <digit> | "2" [0-3]
 <minute>      ::= [0-5] <digit>
 <time>        ::= <hour> ":" <minute>
 <future_time> ::= <time> " tomorrow"?
