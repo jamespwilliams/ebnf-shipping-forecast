@@ -26,7 +26,7 @@
                     "There are warnings of gales in all areas except " <area_list> "."
 
 <rate_of_change>       ::= "more slowly" | "slowly" | "quickly" | "very rapidly"
-<pressure>             ::= "9" <digit> <digit>
+<pressure>             ::= ("9" | "10") <digit> <digit>
 <pressure_description> ::= "High" | "Medium" | "Low"
 <pressure_change>      ::= "deepening" | "clearing"
 
